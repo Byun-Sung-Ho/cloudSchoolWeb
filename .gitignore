@@ -1,2 +1,14 @@
 
 cloudSchool/ex/captures/*
+/cloudSchool/ex/web/0618/node_modules
+/cloudSchool/ex/web/0618recap/node_modules
+/cloudSchool/ex/web/0619/node_modules
+/cloudSchool/ex/web/0620/node_modules
+cloudSchool/ex/web/0620prac/node_modules/ansi-styles/license
+/cloudSchool/ex/web/0620prac/node_modules
+/cloudSchool/ex/web/0624/node_modules
+cloudSchool/ex/web/0624/package.json
+cloudSchool/ex/web/0620prac/package.json
+cloudSchool/ex/web/0620prac/package-lock.json
+cloudSchool/ex/web/0618/package-lock.json
+cloudSchool/ex/web/.vscode/settings.json
