@@ -20,6 +20,13 @@ mongoclient
 
 const express = require("express");
 const app = express();
+const se = require('express-session');
+const sha = require('sha256');
+app.use(se(({
+  secret: 'abc',
+  resave : false,
+  saveUninitialized : false
+})));
 
 //body-parser 라이브러리 추가
 const bodyParser = require("body-parser");
@@ -30,7 +37,12 @@ app.get("/book", function (req, res) {
   res.send("도서 목록 관련 페이지입니다.");
 });
 app.get("/", function (req, res) {
-  res.render(`index.ejs`)
+  if(typeof req.session.user!=='undefined' && req.session.user){
+    // res.send('login connecting');
+    res.render('index.ejs', {user:req.session.user});
+  }else{
+    res.render('index.ejs', {user:null});
+  }
 });
 app.get("/list", function (req, res) {
   //   conn.query("select * from post", function (err, rows, fields) {
@@ -135,14 +147,6 @@ app.get('/cookie', (req,res)=>{
   res.send('cookie setting complete: '+ req.cookies.milk);
 });
 
-const se = require('express-session');
-const sha = require('sha256');
-app.use(se(({
-  secret: 'abc',
-  resave : false,
-  saveUninitialized : true
-})));
-
 app.get('/session',(req, res)=>{
   if(isNaN(req.session.milk)){
     req.session.milk = 0;
@@ -151,9 +155,11 @@ app.get('/session',(req, res)=>{
   req.session.milk = req.session.milk +1000;
   res.send('session: '+req.session.milk + 'won');
 })
+
 app.get('/login', (req, res)=>{
   if(req.session.user){
-    res.send('login connecting');
+    // res.send('login connecting');
+    res.render('index.ejs', {user:req.session.user});
   }else{
     res.render('login.ejs');
   }
@@ -164,21 +170,27 @@ app.post('/login', (req, res)=>{
 
   mydb.collection('account')
   .findOne({userid : req.body.userid})
-  .then((result =>{
+  .then(result =>{
     console.log(result.userpw);
-    if(req.body.userpw == result.userpw){
+    if(result!=null && req.body.userpw == result.userpw){
       req.session.user = req.body;
 
-      res.send('access success');
+      // res.send('access success');
+      res.render('index.ejs',{user:req.session.user});
     }else{
-      res.send('access fail');
+      // res.send('access fail');
+      res.render('login.ejs');
     }
-  }))
+  }).catch(err=>{
+    res.send('access fail');
+    res.status(500).send();
+  })
 })
 
 app.get('/logout', (req,res)=>{
   req.session.destroy();
-  res.redirect('/');
+  // res.redirect('/');4
+  res.render('index.ejs', {user:null});
 })
 
 app.get('/signup', (req,res)=>{
@@ -189,9 +201,17 @@ app.post('/signup', (req,res)=>{
   mydb.collection('account')
   .insertOne({
     userid : req.body.userid,
-    userpw : req.body.userpw,
+    userpw : sha(req.body.userpw),
   })
   .then((result =>{
     res.redirect('/');
   }))
+})
+
+app.get('/bank', (req,res)=>{
+  if(typeof req.session.user != `undefined`){
+    res.send(`${req.session.user.userid}님 자산 현황`);
+  }else{
+    res.send('로그인 먼저 해주세요!');
+  }
 })
