@@ -18,3 +18,10 @@ cloudSchool/ex/web/0625/package.json
 cloudSchool/ex/web/0624/package-lock.json
 cloudSchool/ex/web/0624/package-lock.json
 cloudSchool/ex/web/0624/package-lock.json
+cloudSchool/ex/web/0624/package-lock.json
+*.json
+/cloudSchool/ex/web/0626/node_modules
+cloudSchool/ex/web/0624/package-lock.json
+/cloudSchool/ex/web/0626facebook/node_modules
+/cloudSchool/ex/web/today/0627/node_modules
+cloudSchool/ex/web/0624/package-lock.json

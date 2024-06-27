@@ -175,34 +175,34 @@ app.get('/login', (req, res)=>{
   }
 })
 
-app.post('/login', (req, res)=>{
-  console.log(req.body.userid +'/'+req.body.userpw);
+// app.post('/login', (req, res)=>{
+//   console.log(req.body.userid +'/'+req.body.userpw);
 
-  let salt;
-  conn.query('SELECT salt FROM UserSalt where userid=?',[req.body.userid], function (err, rows, fields) {
-    salt = rows[0].salt;
+//   let salt;
+//   conn.query('SELECT salt FROM UserSalt where userid=?',[req.body.userid], function (err, rows, fields) {
+//     salt = rows[0].salt;
 
-    let inputPW = sha(req.body.userpw + salt)
-    mydb.collection('account')
-    .findOne({userid : req.body.userid})
-    .then(result =>{
-      console.log(result.userpw);
-      if(result!=null && inputPW == result.userpw){
-        req.body.userpw = inputPW;
-        req.session.user = req.body;
+//     let inputPW = sha(req.body.userpw + salt)
+//     mydb.collection('account')
+//     .findOne({userid : req.body.userid})
+//     .then(result =>{
+//       console.log(result.userpw);
+//       if(result!=null && inputPW == result.userpw){
+//         req.body.userpw = inputPW;
+//         req.session.user = req.body;
 
-        // res.send('access success');
-        res.render('index.ejs',{user:req.session.user});
-      }else{
-        // res.send('access fail');
-        res.render('login.ejs');
-      }
-    }).catch(err=>{
-      res.send('access fail');
-      res.status(500).send();
-    })
-  })
-})
+//         // res.send('access success');
+//         res.render('index.ejs',{user:req.session.user});
+//       }else{
+//         // res.send('access fail');
+//         res.render('login.ejs');
+//       }
+//     }).catch(err=>{
+//       res.send('access fail');
+//       res.status(500).send();
+//     })
+//   })
+// })
 
 app.get('/logout', (req,res)=>{
   req.session.destroy();
@@ -220,19 +220,35 @@ app.post('/signup', (req,res)=>{
   const salt = generateSalt();
   console.log(`salt : ${salt}`);
   let myuserpw = sha(req.body.userpw + salt)
+
   mydb.collection('account')
-  .insertOne({
-    userid : req.body.userid,
-    userpw : myuserpw,
+  .findOne({userid : req.body.userid})
+  .then(result =>{
+    console.log(`result : ${result}`);
+    if(result!=null){
+      console.log('found account');
+      res.render('signup.ejs');
+    }
+    else{
+      console.log('adding account')
+      mydb.collection('account')
+      .insertOne({
+        userid : req.body.userid,
+        userpw : myuserpw,
+      })
+      .then((result =>{
+        console.log(`pw : ${myuserpw}`);
+        let sql = "INSERT INTO UserSalt (userid, salt) VALUES (?, ?)";
+        conn.query(sql, [req.body.userid, salt], (err, result) => {
+          console.log("salt 저장 성공");
+        })
+        res.redirect('/');
+      }))
+    }
   })
-  .then((result =>{
-    console.log(`pw : ${myuserpw}`);
-    let sql = "INSERT INTO UserSalt (userid, salt) VALUES (?, ?)";
-    conn.query(sql, [req.body.userid, salt], (err, result) => {
-      console.log("salt 저장 성공");
-    })
-    res.redirect('/');
-  }))
+  .catch(err=>{
+    console.log(err);
+  })
 })
 
 app.get('/bank', (req,res)=>{
@@ -242,3 +258,64 @@ app.get('/bank', (req,res)=>{
     res.send('로그인 먼저 해주세요!');
   }
 })
+
+
+
+//passport
+const passport = require('passport');
+const LS = require('passport-local').Strategy;
+
+app.use(passport.initialize());
+app.use(passport.session());
+
+app.post('/login',passport.authenticate('local',{
+  // successRedirect:'/',failureRedirect: '/fail'
+}),(req,res)=>{
+  console.log(req.session);
+  console.log(req.session.passport);
+  res.render('index.ejs', {user: req.session.passport})
+})
+
+passport.use(new LS(
+  {
+    usernameField: 'userid',
+    passwordField: 'userpw',
+    session: true,
+    passReqToCallback: false
+  },
+  (inputId, inputPw, done) =>{
+    mydb.collection('account')
+    .findOne({userid:inputId})
+    .then(result => {
+      if(result.userpw == inputPw){
+        done(null, result);
+      }
+      else{
+        done(null, false, {message: 'pw error'});
+      }
+    })
+    .catch();
+  }
+))
+
+passport.serializeUser((user, done)=>{
+  console.log('serializeUser');
+  console.log(user);
+  done(null, user.userid);
+})
+
+passport.deserializeUser((puserid, done)=>{
+  console.log('deserializeUser');
+  console.log(puserid);
+
+  mydb.collection('account')
+  .findOne({userid:puserid})
+  .then(result =>{
+    console.log(result);
+    done(null, result);
+  })
+  .catch();
+})
+
+
+
