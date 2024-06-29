@@ -1,0 +1,139 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Admin Dashboard</title>
+    <!-- Bootstrap CSS -->
+    <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet">
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+        }
+        .sidebar {
+            height: 100vh;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 250px;
+            background-color: #343a40;
+            color: white;
+            padding-top: 20px;
+        }
+        .sidebar a {
+            padding: 10px 15px;
+            text-decoration: none;
+            font-size: 18px;
+            color: white;
+            display: block;
+        }
+        .sidebar a:hover {
+            background-color: #575d63;
+        }
+        .content {
+            margin-left: 250px;
+            padding: 20px;
+        }
+        .table {
+            margin-top: 20px;
+        }
+    </style>
+</head>
+<body>
+    <!-- Sidebar -->
+    <div class="sidebar">
+        <a href="#user-information">User Information</a>
+        <a href="#notice-list">Notice List</a>
+    </div>
+
+    <!-- Content -->
+    <div class="content">
+        <h1>Admin Dashboard</h1>
+
+        <!-- User Information Section -->
+        <section id="user-information">
+            <h2>User Information</h2>
+            <table class="table table-striped">
+                <thead>
+                    <tr>
+                        <th>ID</th>
+                        <th>Name</th>
+                        <th>Email</th>
+                        <th>Role</th>
+                    </tr>
+                </thead>
+                <tbody id="user-list">
+                    <!-- User information will be inserted here -->
+                </tbody>
+            </table>
+        </section>
+
+        <!-- Notice List Section -->
+        <section id="notice-list">
+            <h2>Notice List</h2>
+            <form id="add-notice-form" class="mb-4">
+                <div class="form-group">
+                    <label for="notice-text">Add New Notice</label>
+                    <input type="text" class="form-control" id="notice-text" placeholder="Enter notice">
+                </div>
+                <button type="submit" class="btn btn-primary">Add Notice</button>
+            </form>
+            <ul class="list-group" id="notice-list-group">
+                <!-- Notices will be inserted here -->
+            </ul>
+        </section>
+    </div>
+
+    <!-- Bootstrap JS and dependencies -->
+    <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.9.2/dist/umd/popper.min.js"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+
+    <!-- Custom JS -->
+    <script>
+        // Sample user data
+        const users = [
+            { id: 1, name: 'John Doe', email: 'john@example.com', role: 'Admin' },
+            { id: 2, name: 'Jane Smith', email: 'jane@example.com', role: 'User' },
+            { id: 3, name: 'Mike Johnson', email: 'mike@example.com', role: 'User' },
+        ];
+
+        // Function to display user information
+        function displayUsers() {
+            const userList = document.getElementById('user-list');
+            users.forEach(user => {
+                const row = document.createElement('tr');
+                row.innerHTML = `
+                    <td>${user.id}</td>
+                    <td>${user.name}</td>
+                    <td>${user.email}</td>
+                    <td>${user.role}</td>
+                `;
+                userList.appendChild(row);
+            });
+        }
+
+        // Function to add notice
+        function addNotice(event) {
+            event.preventDefault();
+            const noticeText = document.getElementById('notice-text').value;
+            if (noticeText) {
+                const noticeListGroup = document.getElementById('notice-list-group');
+                const noticeItem = document.createElement('li');
+                noticeItem.className = 'list-group-item';
+                noticeItem.textContent = noticeText;
+                noticeListGroup.appendChild(noticeItem);
+                document.getElementById('add-notice-form').reset();
+            }
+        }
+
+        // Event listener for notice form submission
+        document.getElementById('add-notice-form').addEventListener('submit', addNotice);
+
+        // Initialize the page
+        document.addEventListener('DOMContentLoaded', () => {
+            displayUsers();
+        });
+    </script>
+</body>
+</html>

@@ -46,6 +46,7 @@ app.set("view engine", "ejs");
 app.get("/book", function (req, res) {
   res.send("도서 목록 관련 페이지입니다.");
 });
+
 app.get("/", function (req, res) {
   if(typeof req.session.user!=='undefined' && req.session.user){
     // res.send('login connecting');
@@ -92,7 +93,6 @@ app.post("/save", function (req, res) {
       console.log("데이터 추가 성공");
       list(req,res);
     });
-
 
 });
 
