@@ -162,7 +162,7 @@ router.get("/post/list", async (req, res) => {
     const { mongodb } = await setup();
     list(mongodb, req, res);
   } else {
-    res.render("index.ejs", { data: { alertMsg: "로그인 먼저 해주세요" } });
+    res.render("index.ejs", { data: { alertMsg: "로그인 먼저 해주세요!!!!!!!" } });
   }
 });
 
