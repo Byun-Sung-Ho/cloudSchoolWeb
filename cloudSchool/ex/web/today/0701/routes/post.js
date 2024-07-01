@@ -193,5 +193,16 @@ function list(mongodb, req, res) {
         });
     });
 }
+router.get('/search', async(req, res) =>{
+  console.log(req.query.value);
+  const { mongodb } = await setup();
+  mongodb
+      .collection("post")
+      .find({ title: req.query.value }).toArray()
+      .then((result) => {
+          console.log(result);
+          res.render('post/sresult.ejs',{data:result[0]});
+      });
+});
 
 module.exports = router;

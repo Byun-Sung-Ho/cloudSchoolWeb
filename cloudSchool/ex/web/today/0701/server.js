@@ -37,7 +37,6 @@ app.listen(process.env.WEB_PORT, async () => {
   console.log("8080 서버가 준비되었습니다...");
 });
 
-
 // app.use(express.static("public")); //static 미들웨어 설정
 
 
