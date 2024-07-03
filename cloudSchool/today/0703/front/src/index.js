@@ -27,6 +27,8 @@ import "./assets/css/demo.css";
 import "@fortawesome/fontawesome-free/css/all.min.css";
 
 import AdminLayout from "layouts/Admin.js";
+import Modal from 'react-modal';
+Modal.setAppElement('#root');
 
 const root = ReactDOM.createRoot(document.getElementById("root"));
 
