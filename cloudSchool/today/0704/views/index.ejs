@@ -7,6 +7,12 @@
   </head>
   <body>
     <%- include('menu.html') %>
+      
+    <% if(typeof data != 'undefined' && data.alertMsg){ %>
+      <script>
+        alert(`<%= data.alertMsg %>`) ;
+      </script>            
+    <% } %>
     
     <h1>홈입니다.</h1>    
 

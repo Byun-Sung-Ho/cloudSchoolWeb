@@ -38,20 +38,3 @@ app.listen(process.env.WEB_PORT, async () => {
 });
 
 // app.use(express.static("public")); //static 미들웨어 설정
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
