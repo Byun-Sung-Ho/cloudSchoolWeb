@@ -32,7 +32,7 @@ app.get("/", (req, res) => {
 // app.use('/', require('./routes/account.js')); 
 // app.use('/', require('./routes/post'));
 
-app.listen(process.env.WEB_PORT, async () => {
+app.listen(8080, async () => {
   await setup();
   console.log("8080 서버가 준비되었습니다...");
 });
